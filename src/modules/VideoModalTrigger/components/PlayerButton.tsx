@@ -9,7 +9,7 @@ interface IPlayButtonProps {
 const PlayerButton: React.FC<IPlayButtonProps> = (props) => {
     return (
         <>
-            <div className="video-modal__button" onClick={props.onClick}>
+            <div className="video-modal__button" onClick={props.onClick} role="button">
                 <PlayCircleOutlined className="video-modal__button__icon"/>
             </div>
         </>

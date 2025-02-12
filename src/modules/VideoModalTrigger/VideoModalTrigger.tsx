@@ -53,11 +53,15 @@ const VideoModalTrigger: React.FC = () => {
                         shape="circle"
                         icon={currentState === 'full' ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
                         onClick={changeSize}
+                        key="resize"
+                        role="button"
                     />,
                     <Button
                         shape="circle"
                         icon={isPlayVideo ? <PauseOutlined /> : <CaretRightOutlined />}
                         onClick={playAndPause}
+                        key="control"
+                        role="button"
                     />
                 ]}
                 onCancel={handleCancel}

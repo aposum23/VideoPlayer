@@ -1,8 +1,8 @@
-import {createActor, createMachine} from "xstate";
+import {createActor, createMachine, StateValue} from "xstate";
 import {useEffect, useRef, useState} from "react";
 
 const useMachine = () => {
-    const [currentState, setCurrentState] = useState<'closed' | 'full' | 'mini'>('closed');
+    const [currentState, setCurrentState] = useState<StateValue>('closed');
     const [isPlayVideo, setIsPlayVideo] = useState<boolean>(false);
 
     const startVideo = () => {
@@ -53,12 +53,12 @@ const useMachine = () => {
     const actor = useRef(createActor(machine));
     useEffect(() => {
         actor.current.subscribe((snapshot) => {
-            const player = document.getElementsByClassName('ant-modal')[0];
+            const player = document.getElementsByClassName('ant-modal')[0] as HTMLDivElement;
 
             setCurrentState(snapshot.value);
 
             if (player)
-                player.dataset.state = snapshot.value;
+                player.dataset.state = snapshot.value as string;
         })
 
         actor.current.start();
