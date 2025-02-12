@@ -12,16 +12,23 @@ import {
 } from "@ant-design/icons";
 
 const VideoModalTrigger: React.FC = () => {
-    const { actor, currentState} = useMachine();
+    const {
+        actor,
+        currentState,
+        isPlayVideo,
+        setIsPlayVideo
+    } = useMachine();
 
     const [dialogOpened, setDialogOpened] = useState<boolean>(false);
-    const [isPlayVideo, setIsPlayVideo] = useState<boolean>(false);
+
     const openVideoModal = () => {
         setDialogOpened(true);
+        actor.current.send({type: 'open'});
     };
 
     const handleCancel = () => {
         setDialogOpened(false);
+        actor.current.send({type: 'close'});
     };
 
     const changeSize = () => {
@@ -67,6 +74,7 @@ const VideoModalTrigger: React.FC = () => {
                         height="100%"
                         url='https://cdn.flowplayer.com/d9cd469f-14fc-4b7b-a7f6-ccbfa755dcb8/hls/383f752a-cbd1-4691-a73f-a4e583391b3d/playlist.m3u8'
                         playing={isPlayVideo}
+                        loop={true}
                     />
                 </div>
             </Modal>
