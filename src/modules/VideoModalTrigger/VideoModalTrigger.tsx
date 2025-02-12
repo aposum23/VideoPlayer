@@ -3,11 +3,11 @@ import './assets/style.scss';
 import useMachine from "./custom hooks/machineHook.ts";
 import { Modal, Button } from "antd";
 import ReactPlayer from 'react-player'
+import PlayerButton from "./components/PlayerButton.tsx";
 import {
     ArrowsAltOutlined,
     CaretRightOutlined,
     PauseOutlined,
-    PlayCircleOutlined,
     ShrinkOutlined
 } from "@ant-design/icons";
 
@@ -42,12 +42,7 @@ const VideoModalTrigger: React.FC = () => {
     return (
         <>
             <div className="video-modal__container">
-                <div
-                    className="video-modal__button"
-                    onClick={openVideoModal}
-                >
-                    <PlayCircleOutlined className="video-modal__button__icon"/>
-                </div>
+                <PlayerButton onClick={openVideoModal}/>
             </div>
             <Modal
                 className="video-modal__modal"
