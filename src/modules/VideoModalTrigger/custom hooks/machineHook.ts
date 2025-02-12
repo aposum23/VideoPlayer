@@ -2,19 +2,34 @@ import {createActor, createMachine} from "xstate";
 import {useEffect, useRef, useState} from "react";
 
 const useMachine = () => {
-    const [currentState, setCurrentState] = useState<'full' | 'mini'>('full');
+    const [currentState, setCurrentState] = useState<'closed' | 'full' | 'mini'>('closed');
+    const [isPlayVideo, setIsPlayVideo] = useState<boolean>(false);
+
+    const startVideo = () => {
+        setIsPlayVideo(true);
+    }
 
     const machine = createMachine(
         {
             id: 'player',
-            initial: 'full',
+            initial: 'closed',
             states: {
+                closed: {
+                  exit: 'startVideo',
+                  meta: {
+                      description: 'Состояние закрытого видеоплеера'
+                  },
+                  on: {
+                      open: 'full'
+                  }
+                },
                 mini: {
                     meta: {
                         description: 'Видио плеер открытый в небольшом окне'
                     },
                     on: {
-                        toggle: 'full'
+                        toggle: 'full',
+                        close: 'closed'
                     }
                 },
                 full: {
@@ -22,9 +37,15 @@ const useMachine = () => {
                         description: 'Видео открыто на полный свой размер'
                     },
                     on: {
-                        toggle: 'mini'
+                        toggle: 'mini',
+                        close: 'closed'
                     }
                 }
+            }
+        },
+        {
+            actions: {
+                startVideo
             }
         }
     );
@@ -45,7 +66,9 @@ const useMachine = () => {
 
     return {
         actor,
-        currentState
+        currentState,
+        isPlayVideo,
+        setIsPlayVideo
     }
 }
 
