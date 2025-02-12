@@ -1,86 +1,51 @@
 import {createActor, createMachine} from "xstate";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 const useMachine = () => {
-    const [dialogOpened, setDialogOpened] = useState<boolean>(false);
-    const [fullSize, setFullSize] = useState<boolean>(true);
-
-    const openVideoPlayerDialog = () => {
-        console.log('open');
-        setDialogOpened(true)
-    };
-
-    const changeSizeToMinimal = () => {
-        console.log('minimal size');
-        setFullSize(false);
-    };
-
-    const changeSizeToMaximal = () => {
-        console.log('maximal size');
-        setFullSize(true);
-    };
-
-    const closeVideoPlayerDialog = () => {
-        console.log('closed');
-        setDialogOpened(false);
-        setFullSize(true);
-    };
+    const [currentState, setCurrentState] = useState<'full' | 'mini'>('full');
 
     const machine = createMachine(
         {
             id: 'player',
-            initial: 'closed',
+            initial: 'full',
             states: {
-                closed: {
-                    entry: 'pauseVideo',
-                    meta: {
-                        description: 'Закрытый видео плеер. Отображается кнопка для его открытия'
-                    },
-                    on: {
-                        toggle: 'full'
-                    }
-                },
                 mini: {
                     meta: {
                         description: 'Видио плеер открытый в небольшом окне'
                     },
                     on: {
-                        maximize: 'full',
-                        close: 'closed'
+                        toggle: 'full'
                     }
                 },
                 full: {
-                    entry: 'playVideo',
                     meta: {
                         description: 'Видео открыто на полный свой размер'
                     },
                     on: {
-                        minimize: 'mini',
-                        close: 'closed'
+                        toggle: 'mini'
                     }
                 }
-            }
-        },
-        {
-            actions: {
-                toggle: openVideoPlayerDialog,
-                maximize: changeSizeToMaximal,
-                minimize: changeSizeToMinimal,
-                close: closeVideoPlayerDialog,
             }
         }
     );
 
-    const actor = createActor(machine);
+    const actor = useRef(createActor(machine));
+    useEffect(() => {
+        actor.current.subscribe((snapshot) => {
+            const player = document.getElementsByClassName('ant-modal')[0];
 
-    actor.subscribe((snapshot) => {
-        console.log('snapshot: ', snapshot);
-    })
+            setCurrentState(snapshot.value);
+
+            if (player)
+                player.dataset.state = snapshot.value;
+        })
+
+        actor.current.start();
+    });
 
     return {
         actor,
-        dialogOpened,
-        fullSize,
+        currentState
     }
 }
 
